@@ -1,0 +1,45 @@
+archetype,fpl_pct,baseline_snap,reform_snap
+Single adult (CA),0,3516,3516
+Single adult (CA),25,3200,3200
+Single adult (CA),50,2800,2800
+Single adult (CA),75,2200,2200
+Single adult (CA),100,1800,1800
+Single adult (CA),130,800,0
+Single adult (CA),150,400,0
+Single adult (CA),175,100,0
+Single adult (CA),200,0,0
+Single adult (CA),250,0,0
+Single adult (CA),300,0,0
+Family of four (TX),0,8800,8800
+Family of four (TX),25,8200,8200
+Family of four (TX),50,7200,7200
+Family of four (TX),75,6000,6000
+Family of four (TX),100,5000,5000
+Family of four (TX),130,3000,0
+Family of four (TX),150,2000,0
+Family of four (TX),175,800,0
+Family of four (TX),200,0,0
+Family of four (TX),250,0,0
+Family of four (TX),300,0,0
+Senior couple (FL),0,5400,5400
+Senior couple (FL),25,4900,4900
+Senior couple (FL),50,4200,4200
+Senior couple (FL),75,3400,3400
+Senior couple (FL),100,2600,2600
+Senior couple (FL),130,1200,0
+Senior couple (FL),150,600,0
+Senior couple (FL),175,200,0
+Senior couple (FL),200,0,0
+Senior couple (FL),250,0,0
+Senior couple (FL),300,0,0
+Single parent + 2 children (NY),0,7600,7600
+Single parent + 2 children (NY),25,7000,7000
+Single parent + 2 children (NY),50,6100,6100
+Single parent + 2 children (NY),75,5000,5000
+Single parent + 2 children (NY),100,4000,4000
+Single parent + 2 children (NY),130,2200,0
+Single parent + 2 children (NY),150,1400,0
+Single parent + 2 children (NY),175,500,0
+Single parent + 2 children (NY),200,0,0
+Single parent + 2 children (NY),250,0,0
+Single parent + 2 children (NY),300,0,0

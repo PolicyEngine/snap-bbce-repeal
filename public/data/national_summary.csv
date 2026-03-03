@@ -1,0 +1,8 @@
+metric,value
+baseline_recipients,42200000
+reform_recipients,38600000
+recipients_lost,3600000
+baseline_spending,113000000000
+reform_spending,101000000000
+savings,12000000000
+avg_benefit_lost,3333
