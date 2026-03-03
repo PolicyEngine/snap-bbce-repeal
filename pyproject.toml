@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snap-bbce-repeal"
+version = "0.1.0"
+description = "Analysis of repealing SNAP Broad-Based Categorical Eligibility (BBCE)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "numpy",
+    "pandas",
+    "microdf-python",
+]
+
+[project.optional-dependencies]
+microsim = [
+    "policyengine-us>=1.0",
+]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[project.scripts]
+snap-bbce-data = "snap_bbce_repeal.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["snap_bbce_repeal*"]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+
+[tool.pytest.ini_options]
+markers = [
+    "microsim: marks tests requiring policyengine-us (deselect with '-m \"not microsim\"')",
+]
+testpaths = ["tests"]
