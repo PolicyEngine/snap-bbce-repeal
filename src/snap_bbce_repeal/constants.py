@@ -46,9 +46,11 @@ BBCE_STATES = [
     "SD",
     "TX",
     "UT",
+    "VA",
     "VT",
     "WA",
     "WI",
+    "WV",
 ]
 
 # States that do NOT use BBCE.
@@ -57,8 +59,6 @@ NON_BBCE_STATES = [
     "AR",
     "KS",
     "TN",
-    "VA",
-    "WV",
     "WY",
 ]
 
