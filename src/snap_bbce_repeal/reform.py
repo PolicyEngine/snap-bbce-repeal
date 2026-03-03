@@ -18,13 +18,13 @@ We use update_variable (not parameter changes) to bypass the
 exhaustive_parameter_dependencies caching on the snap variable.
 """
 
-from policyengine_us.model_api import *
+from policyengine_us.model_api import *  # noqa: F403
 
 
-class is_tanf_non_cash_eligible(Variable):
+class is_tanf_non_cash_eligible(Variable):  # noqa: F405
     value_type = bool
-    entity = SPMUnit
-    definition_period = YEAR
+    entity = SPMUnit  # noqa: F405
+    definition_period = YEAR  # noqa: F405
     label = "TANF non-cash benefit eligibility (BBCE repealed)"
 
     def formula(spm_unit, period, parameters):

@@ -24,23 +24,21 @@ def _snap_eligible(state, ages, employment_income, reform=None):
     """
     from policyengine_us import Simulation
 
-    n = len(ages)
-    members = {f"person_{i}": {"age": {"2026": a}} for i, a in enumerate(ages)}
+    members = {
+        f"person_{i}": {"age": {"2026": a}}
+        for i, a in enumerate(ages)
+    }
     members["person_0"]["employment_income"] = {"2026": employment_income}
 
     situation = {
         "people": members,
-        "spm_units": {
-            "spm_unit": {"members": list(members.keys())}
-        },
+        "spm_units": {"spm_unit": {"members": list(members.keys())}},
         "tax_units": {
             "tax_unit": {
                 "members": list(members.keys()),
             }
         },
-        "families": {
-            "family": {"members": list(members.keys())}
-        },
+        "families": {"family": {"members": list(members.keys())}},
         "households": {
             "household": {
                 "members": list(members.keys()),
@@ -100,7 +98,9 @@ class TestBBCERepealPropagation:
             "TX", [35, 33, 8, 5], income
         )
         snap_reform, reform_eligible = _snap_eligible(
-            "TX", [35, 33, 8, 5], income,
+            "TX",
+            [35, 33, 8, 5],
+            income,
             reform=get_bbce_repeal_reform(),
         )
 
@@ -135,6 +135,7 @@ class TestBBCERepealPropagation:
         """An SSI-eligible household should retain SNAP categorical
         eligibility even after BBCE repeal."""
         from policyengine_us import Simulation
+
         from snap_bbce_repeal.reform import get_bbce_repeal_reform
 
         situation = {
@@ -154,9 +155,7 @@ class TestBBCERepealPropagation:
                     "state_name": {"2026": "CA"},
                 }
             },
-            "marital_units": {
-                "marital_unit": {"members": ["person"]}
-            },
+            "marital_units": {"marital_unit": {"members": ["person"]}},
         }
 
         sim = Simulation(
@@ -175,6 +174,7 @@ class TestBBCERepealPropagation:
         """An elderly household above 130% FPL should still be exempt
         from the gross income test (independent of BBCE)."""
         from policyengine_us import Simulation
+
         from snap_bbce_repeal.reform import get_bbce_repeal_reform
 
         situation = {
@@ -193,9 +193,7 @@ class TestBBCERepealPropagation:
                     "state_name": {"2026": "CA"},
                 }
             },
-            "marital_units": {
-                "marital_unit": {"members": ["person"]}
-            },
+            "marital_units": {"marital_unit": {"members": ["person"]}},
         }
 
         sim = Simulation(
