@@ -3,10 +3,8 @@
 import microdf as mdf
 import numpy as np
 import pandas as pd
-from policyengine_us import Microsimulation
 
 from ..constants import ANALYSIS_YEAR
-from ..reform import get_bbce_repeal_reform
 
 DECILE_LABELS = [
     "1st",
@@ -22,18 +20,36 @@ DECILE_LABELS = [
 ]
 
 
-def calculate_distributional_impact(year=ANALYSIS_YEAR):
+def calculate_distributional_impact(
+    baseline=None, reformed=None, year=ANALYSIS_YEAR
+):
     """Calculate impact on household net income by income decile.
+
+    Args:
+        baseline: Optional pre-built baseline Microsimulation.
+        reformed: Optional pre-built reform Microsimulation.
+        year: Analysis year.
 
     Returns a DataFrame with columns:
     - decile, absolute_change (avg per household), relative_change (%)
     """
-    baseline = Microsimulation()
-    reformed = Microsimulation(reform=get_bbce_repeal_reform())
+    if baseline is None or reformed is None:
+        from policyengine_us import Microsimulation
 
-    baseline_income = baseline.calculate("household_net_income", year)
-    reform_income_raw = reformed.calculate("household_net_income", year)
-    income_decile = baseline.calculate("household_income_decile", year)
+        from ..reform import get_bbce_repeal_reform
+
+        baseline = Microsimulation()
+        reformed = Microsimulation(reform=get_bbce_repeal_reform())
+
+    baseline_income = baseline.calculate(
+        "household_net_income", year
+    )
+    reform_income_raw = reformed.calculate(
+        "household_net_income", year
+    )
+    income_decile = baseline.calculate(
+        "household_income_decile", year
+    )
 
     reform_income = mdf.MicroSeries(
         reform_income_raw.values, weights=baseline_income.weights
@@ -54,7 +70,11 @@ def calculate_distributional_impact(year=ANALYSIS_YEAR):
 
         change_sum = income_change[mask].sum()
         baseline_sum = baseline_income[mask].sum()
-        relative = (change_sum / baseline_sum) * 100 if baseline_sum > 0 else 0
+        relative = (
+            (change_sum / baseline_sum) * 100
+            if baseline_sum > 0
+            else 0
+        )
         avg_change = income_change[mask].mean()
 
         results.append(
@@ -69,12 +89,16 @@ def calculate_distributional_impact(year=ANALYSIS_YEAR):
     total_change = income_change.sum()
     total_baseline = baseline_income.sum()
     overall_relative = (
-        (total_change / total_baseline) * 100 if total_baseline > 0 else 0
+        (total_change / total_baseline) * 100
+        if total_baseline > 0
+        else 0
     )
     results.append(
         {
             "decile": "All",
-            "absolute_change": round(float(income_change.mean()), 2),
+            "absolute_change": round(
+                float(income_change.mean()), 2
+            ),
             "relative_change": round(float(overall_relative), 4),
         }
     )

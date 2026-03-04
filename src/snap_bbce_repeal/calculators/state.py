@@ -3,14 +3,17 @@
 import microdf as mdf
 import numpy as np
 import pandas as pd
-from policyengine_us import Microsimulation
 
 from ..constants import ANALYSIS_YEAR, BBCE_STATES
-from ..reform import get_bbce_repeal_reform
 
 
-def calculate_state_impact(year=ANALYSIS_YEAR):
+def calculate_state_impact(baseline=None, reformed=None, year=ANALYSIS_YEAR):
     """Calculate per-state impact of repealing BBCE.
+
+    Args:
+        baseline: Optional pre-built baseline Microsimulation.
+        reformed: Optional pre-built reform Microsimulation.
+        year: Analysis year.
 
     Returns a DataFrame with columns:
     - state, is_bbce
@@ -20,12 +23,21 @@ def calculate_state_impact(year=ANALYSIS_YEAR):
     Aggregates snap at the household level to match state_name
     (which is a household-level variable).
     """
-    baseline = Microsimulation()
-    reformed = Microsimulation(reform=get_bbce_repeal_reform())
+    if baseline is None or reformed is None:
+        from policyengine_us import Microsimulation
+
+        from ..reform import get_bbce_repeal_reform
+
+        baseline = Microsimulation()
+        reformed = Microsimulation(reform=get_bbce_repeal_reform())
 
     # Map snap to household level (same entity as state_name)
-    baseline_snap = baseline.calculate("snap", year, map_to="household")
-    reform_snap_raw = reformed.calculate("snap", year, map_to="household")
+    baseline_snap = baseline.calculate(
+        "snap", year, map_to="household"
+    )
+    reform_snap_raw = reformed.calculate(
+        "snap", year, map_to="household"
+    )
     reform_snap = mdf.MicroSeries(
         reform_snap_raw.values, weights=baseline_snap.weights
     )
@@ -67,5 +79,7 @@ def calculate_state_impact(year=ANALYSIS_YEAR):
         )
 
     df = pd.DataFrame(rows)
-    df = df.sort_values("savings", ascending=False).reset_index(drop=True)
+    df = df.sort_values("savings", ascending=False).reset_index(
+        drop=True
+    )
     return df
