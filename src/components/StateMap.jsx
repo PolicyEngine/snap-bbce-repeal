@@ -39,19 +39,26 @@ export default function StateMap({ data }) {
    * Full intensity = primary-700, zero = gray-200.
    * We interpolate RGB between gray-200 (#E2E8F0) and primary-700 (#285E61).
    */
-  function getColor(abbr) {
-    const row = stateData[abbr];
-    if (!row) return "var(--pe-color-gray-100)";
-    if (String(row.is_bbce).toLowerCase() !== "true")
-      return "var(--pe-color-gray-200)";
-    if (row.recipients_lost === 0) return "var(--pe-color-gray-200)";
-    const intensity = row.recipients_lost / maxLost;
-    /* Interpolate from gray-200 (226,232,240) to primary-700 (40,94,97) */
-    const r = Math.round(226 + (40 - 226) * intensity);
-    const g = Math.round(232 + (94 - 232) * intensity);
-    const b = Math.round(240 + (97 - 240) * intensity);
-    return `rgb(${r}, ${g}, ${b})`;
-  }
+  const stateColors = useMemo(() => {
+    const colors = {};
+    for (const row of STATE_GRID.flat()) {
+      if (!row) continue;
+      const d = stateData[row];
+      if (!d) {
+        colors[row] = "var(--pe-color-gray-100)";
+      } else if (!d.is_bbce || d.recipients_lost === 0) {
+        colors[row] = "var(--pe-color-gray-200)";
+      } else {
+        const intensity = d.recipients_lost / maxLost;
+        /* Interpolate from gray-200 (226,232,240) to primary-700 (40,94,97) */
+        const r = Math.round(226 + (40 - 226) * intensity);
+        const g = Math.round(232 + (94 - 232) * intensity);
+        const b = Math.round(240 + (97 - 240) * intensity);
+        colors[row] = `rgb(${r}, ${g}, ${b})`;
+      }
+    }
+    return colors;
+  }, [stateData, maxLost]);
 
   const hoveredData = hovered ? stateData[hovered] : null;
 
@@ -90,7 +97,7 @@ export default function StateMap({ data }) {
                     style={{
                       borderRadius: "var(--pe-radius-element)",
                       backgroundColor: cell
-                        ? getColor(cell)
+                        ? stateColors[cell] || "var(--pe-color-gray-100)"
                         : "transparent",
                       color: cell
                         ? "var(--pe-color-text-primary)"
@@ -117,7 +124,7 @@ export default function StateMap({ data }) {
               style={{ fontSize: "var(--pe-font-size-sm)" }}
             >
               <span className="font-semibold">{hoveredData.state}</span>
-              {String(hoveredData.is_bbce).toLowerCase() === "true" ? (
+              {hoveredData.is_bbce === true ? (
                 <>
                   {" "}
                   &mdash; {formatCompact(hoveredData.recipients_lost)} lose

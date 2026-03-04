@@ -14,13 +14,7 @@ import {
   Legend,
 } from "recharts";
 
-/* Read PE tokens from CSS variables at render time */
-function getCssVar(name) {
-  if (typeof window === "undefined") return "";
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim();
-}
+import getCssVar from "../../lib/getCssVar";
 
 export default function ArchetypeExplorer({ data }) {
   const archetypes = useMemo(() => {
@@ -41,12 +35,18 @@ export default function ArchetypeExplorer({ data }) {
       }));
   }, [data, selected]);
 
-  const primaryColor = getCssVar("--pe-color-primary-500") || "#319795";
-  const errorColor = getCssVar("--pe-color-error") || "#EF4444";
-  const gridColor = getCssVar("--pe-color-border-light") || "#E2E8F0";
-  const grayColor = getCssVar("--pe-color-gray-400") || "#9CA3AF";
-  const fontFamily =
-    getCssVar("--pe-font-family-primary") || "Inter, sans-serif";
+  const { primaryColor, errorColor, gridColor, grayColor, fontFamily } =
+    useMemo(
+      () => ({
+        primaryColor: getCssVar("--pe-color-primary-500") || "#319795",
+        errorColor: getCssVar("--pe-color-error") || "#EF4444",
+        gridColor: getCssVar("--pe-color-border-light") || "#E2E8F0",
+        grayColor: getCssVar("--pe-color-gray-400") || "#9CA3AF",
+        fontFamily:
+          getCssVar("--pe-font-family-primary") || "Inter, sans-serif",
+      }),
+      [],
+    );
 
   return (
     <section>
@@ -63,6 +63,7 @@ export default function ArchetypeExplorer({ data }) {
 
       <div className="mb-4">
         <label
+          htmlFor="household-type"
           className="mr-2"
           style={{
             fontSize: "var(--pe-font-size-sm)",
@@ -72,6 +73,7 @@ export default function ArchetypeExplorer({ data }) {
           Household type:
         </label>
         <select
+          id="household-type"
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
           className="px-3 py-1.5"
@@ -107,6 +109,7 @@ export default function ArchetypeExplorer({ data }) {
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis
               dataKey="fpl"
+              niceTicks
               tick={{ fontSize: 12, fontFamily }}
               label={{
                 value: "Household income (% of federal poverty level)",
@@ -118,6 +121,7 @@ export default function ArchetypeExplorer({ data }) {
               tickFormatter={(v) => `${v}%`}
             />
             <YAxis
+              niceTicks
               tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) => `$${v.toLocaleString()}`}
               label={{

@@ -61,7 +61,7 @@ export default function StateTable({ data }) {
   function renderCell(row, col) {
     const v = row[col.key];
     if (col.key === "is_bbce") {
-      return String(v).toLowerCase() === "true" ? "Yes" : "No";
+      return v === true ? "Yes" : "No";
     }
     if (col.key === "savings") return fmtDollars(v);
     if (col.key === "state") return v;
@@ -121,8 +121,7 @@ export default function StateTable({ data }) {
           </thead>
           <tbody>
             {sorted.map((row) => {
-              const isBbce =
-                String(row.is_bbce).toLowerCase() === "true";
+              const isBbce = row.is_bbce === true;
               return (
                 <tr
                   key={row.state}

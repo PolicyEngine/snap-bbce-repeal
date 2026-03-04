@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -12,14 +12,7 @@ import {
   Cell,
   ReferenceLine,
 } from "recharts";
-
-/* Read PE tokens from CSS variables at render time */
-function getCssVar(name) {
-  if (typeof window === "undefined") return "";
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim();
-}
+import getCssVar from "../../lib/getCssVar";
 
 export default function DistributionalChart({ data }) {
   const [mode, setMode] = useState("absolute");
@@ -35,10 +28,16 @@ export default function DistributionalChart({ data }) {
   const allRow = data.find((d) => d.decile === "All");
 
   /* Resolve tokens for Recharts (SVG needs raw values) */
-  const errorColor = getCssVar("--pe-color-error") || "#EF4444";
-  const gridColor = getCssVar("--pe-color-border-light") || "#E2E8F0";
-  const grayColor = getCssVar("--pe-color-gray-200") || "#E2E8F0";
-  const fontFamily = getCssVar("--pe-font-family-primary") || "Inter, sans-serif";
+  const { errorColor, gridColor, grayColor, fontFamily } = useMemo(
+    () => ({
+      errorColor: getCssVar("--pe-color-error") || "#EF4444",
+      gridColor: getCssVar("--pe-color-border-light") || "#E2E8F0",
+      grayColor: getCssVar("--pe-color-gray-200") || "#E2E8F0",
+      fontFamily:
+        getCssVar("--pe-font-family-primary") || "Inter, sans-serif",
+    }),
+    [],
+  );
 
   return (
     <section>
@@ -99,9 +98,11 @@ export default function DistributionalChart({ data }) {
             <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis
               dataKey="decile"
+              niceTicks
               tick={{ fontSize: 12, fontFamily }}
             />
             <YAxis
+              niceTicks
               tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) =>
                 mode === "absolute" ? `$${v}` : `${v}%`
