@@ -2,8 +2,9 @@
 
 const LABELS = {
   spm_poverty_rate: "SPM poverty rate",
-  spm_deep_poverty_rate: "SPM deep poverty rate",
   spm_child_poverty_rate: "SPM child poverty rate",
+  spm_deep_poverty_rate: "SPM deep poverty rate",
+  spm_child_deep_poverty_rate: "SPM child deep poverty rate",
 };
 
 export default function PovertyMetrics({ data }) {
@@ -12,7 +13,7 @@ export default function PovertyMetrics({ data }) {
       <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">
         Poverty impact
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {data.map((row) => (
           <div
             key={row.metric}

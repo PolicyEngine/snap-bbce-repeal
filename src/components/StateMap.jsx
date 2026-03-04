@@ -37,7 +37,7 @@ export default function StateMap({ data }) {
   function getColor(abbr) {
     const row = stateData[abbr];
     if (!row) return "#f3f4f6";
-    if (row.is_bbce === "false" || row.is_bbce === false) return "#e5e7eb";
+    if (String(row.is_bbce).toLowerCase() !== "true") return "#e5e7eb";
     if (row.recipients_lost === 0) return "#e5e7eb";
     const intensity = row.recipients_lost / maxLost;
     const r = Math.round(44 + (220 - 44) * (1 - intensity));
@@ -83,7 +83,7 @@ export default function StateMap({ data }) {
           {hoveredData && (
             <div className="mt-3 text-sm text-center">
               <span className="font-semibold">{hoveredData.state}</span>
-              {hoveredData.is_bbce === "true" || hoveredData.is_bbce === true ? (
+              {String(hoveredData.is_bbce).toLowerCase() === "true" ? (
                 <>
                   {" "}
                   &mdash; {formatCompact(hoveredData.recipients_lost)} lose

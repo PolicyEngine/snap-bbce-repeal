@@ -18,7 +18,7 @@ export default function NationalOverview({ data }) {
     },
     {
       label: "Average benefit lost",
-      value: `$${data.avg_benefit_lost.toLocaleString()}/year`,
+      value: `$${Math.round(data.avg_benefit_lost).toLocaleString()}/year`,
     },
   ];
 

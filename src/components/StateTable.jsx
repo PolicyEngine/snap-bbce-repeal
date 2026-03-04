@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 
 function fmt(n) {
-  return n.toLocaleString();
+  return Math.round(n).toLocaleString();
 }
 
 function fmtDollars(n) {
@@ -61,7 +61,7 @@ export default function StateTable({ data }) {
   function renderCell(row, col) {
     const v = row[col.key];
     if (col.key === "is_bbce") {
-      return v === "true" || v === true ? "Yes" : "No";
+      return String(v).toLowerCase() === "true" ? "Yes" : "No";
     }
     if (col.key === "savings") return fmtDollars(v);
     if (col.key === "state") return v;
@@ -94,8 +94,7 @@ export default function StateTable({ data }) {
           </thead>
           <tbody>
             {sorted.map((row) => {
-              const isBbce =
-                row.is_bbce === "true" || row.is_bbce === true;
+              const isBbce = String(row.is_bbce).toLowerCase() === "true";
               return (
                 <tr
                   key={row.state}
