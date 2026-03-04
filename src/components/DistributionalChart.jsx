@@ -107,14 +107,21 @@ export default function DistributionalChart({ data }) {
               tickCount={6}
               tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) =>
-                mode === "absolute" ? `$${v}` : `${v}%`
+                mode === "absolute"
+                  ? v < 0
+                    ? `-$${Math.abs(v)}`
+                    : `$${v}`
+                  : `${v}%`
               }
             />
             <Tooltip
               contentStyle={{ fontFamily }}
               formatter={(v) =>
                 mode === "absolute"
-                  ? [`$${v}/year`, "Change in net income"]
+                  ? [
+                      `${v < 0 ? "-" : ""}$${Math.abs(v)}/year`,
+                      "Change in net income",
+                    ]
                   : [`${v}%`, "Change in net income"]
               }
             />
@@ -139,7 +146,7 @@ export default function DistributionalChart({ data }) {
           >
             Average across all households:{" "}
             {mode === "absolute"
-              ? `$${allRow.absolute_change}/year`
+              ? `${allRow.absolute_change < 0 ? "-" : ""}$${Math.abs(allRow.absolute_change)}/year`
               : `${allRow.relative_change}%`}
           </p>
         )}
