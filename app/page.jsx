@@ -13,6 +13,9 @@ import parseCSV from "../lib/parseCSV";
 
 const VALID_TABS = ["overview", "states", "households"];
 
+const PE_LOGO_URL =
+  "https://raw.githubusercontent.com/PolicyEngine/policyengine-app-v2/main/app/public/assets/logos/policyengine/white.png";
+
 function Dashboard() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -85,24 +88,39 @@ function Dashboard() {
   );
 
   return (
-    <div
-      className="min-h-screen bg-white"
-      style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
-    >
-      <header className="bg-[#2C6496] text-white py-6 px-4">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-bold tracking-tight">
-            SNAP BBCE repeal analysis
-          </h1>
-          <p className="text-white/80 mt-1 text-sm">
-            PolicyEngine microsimulation analysis of repealing Broad-Based
-            Categorical Eligibility for SNAP
-          </p>
+    <div className="min-h-screen bg-pe-bg-primary">
+      <header
+        className="py-6 px-4"
+        style={{ backgroundColor: "var(--pe-color-primary-700)" }}
+      >
+        <div className="max-w-5xl mx-auto flex items-center gap-4">
+          <img src={PE_LOGO_URL} alt="PolicyEngine" className="h-8" />
+          <div>
+            <h1
+              className="text-2xl font-bold tracking-tight"
+              style={{ color: "var(--pe-color-text-inverse)" }}
+            >
+              SNAP BBCE repeal analysis
+            </h1>
+            <p
+              className="mt-1"
+              style={{
+                color: "var(--pe-color-primary-200)",
+                fontSize: "var(--pe-font-size-sm)",
+              }}
+            >
+              Microsimulation analysis of repealing Broad-Based Categorical
+              Eligibility for SNAP
+            </p>
+          </div>
         </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        <div className="flex gap-1 border-b border-gray-200 mb-6">
+        <div
+          className="flex gap-1 mb-6"
+          style={{ borderBottom: "1px solid var(--pe-color-border-light)" }}
+        >
           {[
             { id: "overview", label: "Overview" },
             { id: "states", label: "State impact" },
@@ -110,11 +128,18 @@ function Dashboard() {
           ].map((tab) => (
             <button
               key={tab.id}
-              className={`px-4 py-2.5 text-sm font-medium transition-colors cursor-pointer ${
-                activeTab === tab.id
-                  ? "text-[#2C6496] border-b-2 border-[#2C6496]"
-                  : "text-gray-500 hover:text-gray-700"
-              }`}
+              className="px-4 py-2.5 font-medium transition-colors cursor-pointer"
+              style={{
+                fontSize: "var(--pe-font-size-sm)",
+                color:
+                  activeTab === tab.id
+                    ? "var(--pe-color-primary-600)"
+                    : "var(--pe-color-text-tertiary)",
+                borderBottom:
+                  activeTab === tab.id
+                    ? "2px solid var(--pe-color-primary-500)"
+                    : "2px solid transparent",
+              }}
               onClick={() => handleTabChange(tab.id)}
             >
               {tab.label}
@@ -122,9 +147,21 @@ function Dashboard() {
           ))}
         </div>
 
-        {error && <p className="text-red-600 py-8 text-center">{error}</p>}
+        {error && (
+          <p
+            className="py-8 text-center"
+            style={{ color: "var(--pe-color-error)" }}
+          >
+            {error}
+          </p>
+        )}
         {loading && !error && (
-          <p className="text-gray-500 py-8 text-center">Loading data...</p>
+          <p
+            className="py-8 text-center"
+            style={{ color: "var(--pe-color-text-tertiary)" }}
+          >
+            Loading data...
+          </p>
         )}
 
         {!loading && !error && data && (
@@ -151,13 +188,21 @@ function Dashboard() {
           </>
         )}
 
-        <footer className="mt-12 pt-6 border-t border-gray-200 text-gray-500 text-xs text-center pb-6">
+        <footer
+          className="mt-12 pt-6 text-center pb-6"
+          style={{
+            borderTop: "1px solid var(--pe-color-border-light)",
+            color: "var(--pe-color-text-tertiary)",
+            fontSize: "var(--pe-font-size-xs)",
+          }}
+        >
           Built by{" "}
           <a
             href="https://policyengine.org"
             target="_blank"
             rel="noreferrer"
-            className="text-[#2C6496] hover:underline"
+            style={{ color: "var(--pe-color-primary-500)" }}
+            className="hover:underline"
           >
             PolicyEngine
           </a>{" "}
@@ -171,7 +216,14 @@ function Dashboard() {
 export default function Page() {
   return (
     <Suspense
-      fallback={<p className="text-gray-500 py-8 text-center">Loading...</p>}
+      fallback={
+        <p
+          className="py-8 text-center"
+          style={{ color: "var(--pe-color-text-tertiary)" }}
+        >
+          Loading...
+        </p>
+      }
     >
       <Dashboard />
     </Suspense>

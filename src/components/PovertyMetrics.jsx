@@ -10,28 +10,66 @@ const LABELS = {
 export default function PovertyMetrics({ data }) {
   return (
     <section>
-      <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">
+      <h2
+        className="mb-4"
+        style={{
+          fontSize: "var(--pe-font-size-lg)",
+          fontWeight: "var(--pe-font-weight-semibold)",
+          color: "var(--pe-color-text-primary)",
+        }}
+      >
         Poverty impact
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {data.map((row) => (
           <div
             key={row.metric}
-            className="bg-[#f8f9fa] border border-[#e5e7eb] rounded-lg p-5"
+            className="p-5"
+            style={{
+              backgroundColor: "var(--pe-color-gray-50)",
+              border: "1px solid var(--pe-color-border-light)",
+              borderRadius: "var(--pe-radius-container)",
+            }}
           >
-            <p className="text-sm text-gray-500 mb-2">
+            <p
+              className="mb-2"
+              style={{
+                fontSize: "var(--pe-font-size-sm)",
+                color: "var(--pe-color-text-secondary)",
+              }}
+            >
               {LABELS[row.metric] || row.metric}
             </p>
             <div className="flex items-baseline gap-3">
-              <span className="text-xl font-bold text-[#1a1a1a]">
+              <span
+                className="font-bold"
+                style={{
+                  fontSize: "var(--pe-font-size-xl)",
+                  color: "var(--pe-color-text-primary)",
+                }}
+              >
                 {row.baseline}%
               </span>
-              <span className="text-gray-400">&rarr;</span>
-              <span className="text-xl font-bold text-[#1a1a1a]">
+              <span style={{ color: "var(--pe-color-text-tertiary)" }}>
+                &rarr;
+              </span>
+              <span
+                className="font-bold"
+                style={{
+                  fontSize: "var(--pe-font-size-xl)",
+                  color: "var(--pe-color-text-primary)",
+                }}
+              >
                 {row.reform}%
               </span>
             </div>
-            <p className="text-sm mt-2 text-red-600 font-medium">
+            <p
+              className="mt-2 font-medium"
+              style={{
+                fontSize: "var(--pe-font-size-sm)",
+                color: "var(--pe-color-error)",
+              }}
+            >
               +{row.change} pp
             </p>
           </div>

@@ -9,7 +9,7 @@ function fmt(n) {
 function fmtDollars(n) {
   if (n >= 1e9) return `$${(n / 1e9).toFixed(1)}B`;
   if (n >= 1e6) return `$${(n / 1e6).toFixed(0)}M`;
-  return `$${n.toLocaleString()}`;
+  return `$${Math.round(n).toLocaleString()}`;
 }
 
 const COLUMNS = [
@@ -71,22 +71,49 @@ export default function StateTable({ data }) {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">
+      <h2
+        className="mb-4"
+        style={{
+          fontSize: "var(--pe-font-size-lg)",
+          fontWeight: "var(--pe-font-weight-semibold)",
+          color: "var(--pe-color-text-primary)",
+        }}
+      >
         State detail
       </h2>
-      <div className="overflow-x-auto border border-[#e5e7eb] rounded-lg">
-        <table className="w-full text-sm">
+      <div
+        className="overflow-x-auto"
+        style={{
+          border: "1px solid var(--pe-color-border-light)",
+          borderRadius: "var(--pe-radius-container)",
+        }}
+      >
+        <table
+          className="w-full"
+          style={{ fontSize: "var(--pe-font-size-sm)" }}
+        >
           <thead>
-            <tr className="bg-[#f8f9fa]">
+            <tr style={{ backgroundColor: "var(--pe-color-gray-50)" }}>
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-3 py-2.5 font-medium text-gray-600 cursor-pointer hover:text-[#2C6496] select-none whitespace-nowrap text-${col.align}`}
+                  className={`px-3 py-2.5 font-medium cursor-pointer select-none whitespace-nowrap text-${col.align}`}
+                  style={{ color: "var(--pe-color-text-secondary)" }}
                   onClick={() => handleSort(col.key)}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color =
+                      "var(--pe-color-primary-500)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color =
+                      "var(--pe-color-text-secondary)")
+                  }
                 >
                   {col.label}
                   {sortKey === col.key && (
-                    <span className="ml-1">{sortAsc ? "\u25B2" : "\u25BC"}</span>
+                    <span className="ml-1">
+                      {sortAsc ? "\u25B2" : "\u25BC"}
+                    </span>
                   )}
                 </th>
               ))}
@@ -94,22 +121,34 @@ export default function StateTable({ data }) {
           </thead>
           <tbody>
             {sorted.map((row) => {
-              const isBbce = String(row.is_bbce).toLowerCase() === "true";
+              const isBbce =
+                String(row.is_bbce).toLowerCase() === "true";
               return (
                 <tr
                   key={row.state}
-                  className={`border-t border-[#e5e7eb] ${
-                    isBbce ? "bg-white" : "bg-gray-50"
-                  }`}
+                  style={{
+                    borderTop: "1px solid var(--pe-color-border-light)",
+                    backgroundColor: isBbce
+                      ? "var(--pe-color-bg-primary)"
+                      : "var(--pe-color-gray-50)",
+                  }}
                 >
                   {COLUMNS.map((col) => (
                     <td
                       key={col.key}
-                      className={`px-3 py-2 text-${col.align} ${
-                        col.key === "recipients_lost" && row.recipients_lost > 0
-                          ? "text-red-600 font-medium"
-                          : "text-[#1a1a1a]"
-                      }`}
+                      className={`px-3 py-2 text-${col.align}`}
+                      style={{
+                        color:
+                          col.key === "recipients_lost" &&
+                          row.recipients_lost > 0
+                            ? "var(--pe-color-error)"
+                            : "var(--pe-color-text-primary)",
+                        fontWeight:
+                          col.key === "recipients_lost" &&
+                          row.recipients_lost > 0
+                            ? "var(--pe-font-weight-medium)"
+                            : "var(--pe-font-weight-normal)",
+                      }}
                     >
                       {renderCell(row, col)}
                     </td>
@@ -117,7 +156,13 @@ export default function StateTable({ data }) {
                 </tr>
               );
             })}
-            <tr className="border-t-2 border-[#2C6496] bg-[#f8f9fa] font-semibold">
+            <tr
+              className="font-semibold"
+              style={{
+                borderTop: "2px solid var(--pe-color-primary-500)",
+                backgroundColor: "var(--pe-color-gray-50)",
+              }}
+            >
               <td className="px-3 py-2">Total</td>
               <td className="px-3 py-2 text-center">&mdash;</td>
               <td className="px-3 py-2 text-right">
@@ -126,7 +171,10 @@ export default function StateTable({ data }) {
               <td className="px-3 py-2 text-right">
                 {fmt(totals.reform_recipients)}
               </td>
-              <td className="px-3 py-2 text-right text-red-600">
+              <td
+                className="px-3 py-2 text-right"
+                style={{ color: "var(--pe-color-error)" }}
+              >
                 {fmt(totals.recipients_lost)}
               </td>
               <td className="px-3 py-2 text-right">

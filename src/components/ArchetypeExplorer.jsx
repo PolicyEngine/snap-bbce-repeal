@@ -14,6 +14,14 @@ import {
   Legend,
 } from "recharts";
 
+/* Read PE tokens from CSS variables at render time */
+function getCssVar(name) {
+  if (typeof window === "undefined") return "";
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}
+
 export default function ArchetypeExplorer({ data }) {
   const archetypes = useMemo(() => {
     const set = new Set();
@@ -33,18 +41,47 @@ export default function ArchetypeExplorer({ data }) {
       }));
   }, [data, selected]);
 
+  const primaryColor = getCssVar("--pe-color-primary-500") || "#319795";
+  const errorColor = getCssVar("--pe-color-error") || "#EF4444";
+  const gridColor = getCssVar("--pe-color-border-light") || "#E2E8F0";
+  const grayColor = getCssVar("--pe-color-gray-400") || "#9CA3AF";
+  const fontFamily =
+    getCssVar("--pe-font-family-primary") || "Inter, sans-serif";
+
   return (
     <section>
-      <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">
+      <h2
+        className="mb-4"
+        style={{
+          fontSize: "var(--pe-font-size-lg)",
+          fontWeight: "var(--pe-font-weight-semibold)",
+          color: "var(--pe-color-text-primary)",
+        }}
+      >
         Household benefit explorer
       </h2>
 
       <div className="mb-4">
-        <label className="text-sm text-gray-600 mr-2">Household type:</label>
+        <label
+          className="mr-2"
+          style={{
+            fontSize: "var(--pe-font-size-sm)",
+            color: "var(--pe-color-text-secondary)",
+          }}
+        >
+          Household type:
+        </label>
         <select
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
-          className="border border-[#e5e7eb] rounded px-3 py-1.5 text-sm bg-white"
+          className="px-3 py-1.5"
+          style={{
+            border: "1px solid var(--pe-color-border-light)",
+            borderRadius: "var(--pe-radius-element)",
+            fontSize: "var(--pe-font-size-sm)",
+            backgroundColor: "var(--pe-color-bg-primary)",
+            fontFamily: "var(--pe-font-family-primary)",
+          }}
         >
           {archetypes.map((a) => (
             <option key={a} value={a}>
@@ -54,26 +91,34 @@ export default function ArchetypeExplorer({ data }) {
         </select>
       </div>
 
-      <div className="bg-[#f8f9fa] border border-[#e5e7eb] rounded-lg p-4">
+      <div
+        className="p-4"
+        style={{
+          backgroundColor: "var(--pe-color-gray-50)",
+          border: "1px solid var(--pe-color-border-light)",
+          borderRadius: "var(--pe-radius-container)",
+        }}
+      >
         <ResponsiveContainer width="100%" height={360}>
           <LineChart
             data={chartData}
             margin={{ top: 5, right: 20, bottom: 20, left: 20 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
             <XAxis
               dataKey="fpl"
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fontFamily }}
               label={{
                 value: "Household income (% of federal poverty level)",
                 position: "bottom",
                 offset: 5,
                 fontSize: 12,
+                fontFamily,
               }}
               tickFormatter={(v) => `${v}%`}
             />
             <YAxis
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) => `$${v.toLocaleString()}`}
               label={{
                 value: "Annual SNAP benefit ($)",
@@ -81,16 +126,19 @@ export default function ArchetypeExplorer({ data }) {
                 position: "insideLeft",
                 offset: -5,
                 fontSize: 12,
+                fontFamily,
               }}
             />
             <Tooltip
+              contentStyle={{ fontFamily }}
               formatter={(v, name) => [
-                `$${v.toLocaleString()}/year`,
+                `$${Math.round(v).toLocaleString()}/year`,
                 name === "baseline" ? "Current law" : "After BBCE repeal",
               ]}
               labelFormatter={(v) => `${v}% FPL`}
             />
             <Legend
+              wrapperStyle={{ fontFamily }}
               formatter={(v) =>
                 v === "baseline" ? "Current law" : "After BBCE repeal"
               }
@@ -98,43 +146,51 @@ export default function ArchetypeExplorer({ data }) {
             <ReferenceArea
               x1={130}
               x2={200}
-              fill="#2C6496"
+              fill={primaryColor}
               fillOpacity={0.08}
               label={{
                 value: "BBCE zone",
                 position: "insideTop",
                 fontSize: 11,
-                fill: "#2C6496",
+                fontFamily,
+                fill: primaryColor,
               }}
             />
             <ReferenceLine
               x={130}
-              stroke="#999"
+              stroke={grayColor}
               strokeDasharray="4 4"
               label={{
                 value: "130% FPL",
                 position: "top",
                 fontSize: 11,
-                fill: "#666",
+                fontFamily,
+                fill: grayColor,
               }}
             />
             <Line
               type="monotone"
               dataKey="baseline"
-              stroke="#2C6496"
+              stroke={primaryColor}
               strokeWidth={2}
               dot={{ r: 3 }}
             />
             <Line
               type="monotone"
               dataKey="reform"
-              stroke="#dc2626"
+              stroke={errorColor}
               strokeWidth={2}
               dot={{ r: 3 }}
             />
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-500 text-center mt-2">
+        <p
+          className="text-center mt-2"
+          style={{
+            fontSize: "var(--pe-font-size-xs)",
+            color: "var(--pe-color-text-secondary)",
+          }}
+        >
           The shaded region (130&ndash;200% FPL) shows the income range where
           BBCE currently extends SNAP eligibility beyond the federal limit.
         </p>

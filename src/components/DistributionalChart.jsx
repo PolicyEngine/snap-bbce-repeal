@@ -13,6 +13,14 @@ import {
   ReferenceLine,
 } from "recharts";
 
+/* Read PE tokens from CSS variables at render time */
+function getCssVar(name) {
+  if (typeof window === "undefined") return "";
+  return getComputedStyle(document.documentElement)
+    .getPropertyValue(name)
+    .trim();
+}
+
 export default function DistributionalChart({ data }) {
   const [mode, setMode] = useState("absolute");
 
@@ -26,67 +34,106 @@ export default function DistributionalChart({ data }) {
 
   const allRow = data.find((d) => d.decile === "All");
 
+  /* Resolve tokens for Recharts (SVG needs raw values) */
+  const errorColor = getCssVar("--pe-color-error") || "#EF4444";
+  const gridColor = getCssVar("--pe-color-border-light") || "#E2E8F0";
+  const grayColor = getCssVar("--pe-color-gray-200") || "#E2E8F0";
+  const fontFamily = getCssVar("--pe-font-family-primary") || "Inter, sans-serif";
+
   return (
     <section>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-[#1a1a1a]">
+        <h2
+          style={{
+            fontSize: "var(--pe-font-size-lg)",
+            fontWeight: "var(--pe-font-weight-semibold)",
+            color: "var(--pe-color-text-primary)",
+          }}
+        >
           Distributional impact by income decile
         </h2>
-        <div className="flex gap-1 bg-[#f8f9fa] rounded-md p-0.5 border border-[#e5e7eb]">
-          <button
-            className={`px-3 py-1 text-xs font-medium rounded cursor-pointer transition-colors ${
-              mode === "absolute"
-                ? "bg-white text-[#1a1a1a] shadow-sm"
-                : "text-gray-500"
-            }`}
-            onClick={() => setMode("absolute")}
-          >
-            Absolute ($)
-          </button>
-          <button
-            className={`px-3 py-1 text-xs font-medium rounded cursor-pointer transition-colors ${
-              mode === "relative"
-                ? "bg-white text-[#1a1a1a] shadow-sm"
-                : "text-gray-500"
-            }`}
-            onClick={() => setMode("relative")}
-          >
-            Relative (%)
-          </button>
+        <div
+          className="flex gap-1 p-0.5"
+          style={{
+            backgroundColor: "var(--pe-color-gray-50)",
+            borderRadius: "var(--pe-radius-element)",
+            border: "1px solid var(--pe-color-border-light)",
+          }}
+        >
+          {["absolute", "relative"].map((m) => (
+            <button
+              key={m}
+              className="px-3 py-1 font-medium transition-colors cursor-pointer"
+              style={{
+                fontSize: "var(--pe-font-size-xs)",
+                borderRadius: "var(--pe-radius-element)",
+                backgroundColor:
+                  mode === m ? "var(--pe-color-bg-primary)" : "transparent",
+                color:
+                  mode === m
+                    ? "var(--pe-color-text-primary)"
+                    : "var(--pe-color-text-tertiary)",
+                boxShadow: mode === m ? "0 1px 2px rgba(0,0,0,0.05)" : "none",
+              }}
+              onClick={() => setMode(m)}
+            >
+              {m === "absolute" ? "Absolute ($)" : "Relative (%)"}
+            </button>
+          ))}
         </div>
       </div>
 
-      <div className="bg-[#f8f9fa] border border-[#e5e7eb] rounded-lg p-4">
+      <div
+        className="p-4"
+        style={{
+          backgroundColor: "var(--pe-color-gray-50)",
+          border: "1px solid var(--pe-color-border-light)",
+          borderRadius: "var(--pe-radius-container)",
+        }}
+      >
         <ResponsiveContainer width="100%" height={320}>
-          <BarChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 20 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="decile" tick={{ fontSize: 12 }} />
+          <BarChart
+            data={chartData}
+            margin={{ top: 5, right: 20, bottom: 5, left: 20 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+            <XAxis
+              dataKey="decile"
+              tick={{ fontSize: 12, fontFamily }}
+            />
             <YAxis
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) =>
                 mode === "absolute" ? `$${v}` : `${v}%`
               }
             />
             <Tooltip
+              contentStyle={{ fontFamily }}
               formatter={(v) =>
                 mode === "absolute"
                   ? [`$${v}/year`, "Change in net income"]
                   : [`${v}%`, "Change in net income"]
               }
             />
-            <ReferenceLine y={0} stroke="#666" />
+            <ReferenceLine y={0} stroke={grayColor} />
             <Bar dataKey="value" radius={[4, 4, 0, 0]}>
               {chartData.map((entry, i) => (
                 <Cell
                   key={i}
-                  fill={entry.value < 0 ? "#dc2626" : "#e5e7eb"}
+                  fill={entry.value < 0 ? errorColor : grayColor}
                 />
               ))}
             </Bar>
           </BarChart>
         </ResponsiveContainer>
         {allRow && (
-          <p className="text-xs text-gray-500 text-center mt-2">
+          <p
+            className="text-center mt-2"
+            style={{
+              fontSize: "var(--pe-font-size-xs)",
+              color: "var(--pe-color-text-secondary)",
+            }}
+          >
             Average across all households:{" "}
             {mode === "absolute"
               ? `$${allRow.absolute_change}/year`

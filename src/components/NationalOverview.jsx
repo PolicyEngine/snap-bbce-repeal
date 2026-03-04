@@ -24,17 +24,45 @@ export default function NationalOverview({ data }) {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">
+      <h2
+        className="mb-4"
+        style={{
+          fontSize: "var(--pe-font-size-lg)",
+          fontWeight: "var(--pe-font-weight-semibold)",
+          color: "var(--pe-color-text-primary)",
+        }}
+      >
         National summary
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {cards.map((card) => (
           <div
             key={card.label}
-            className="bg-[#f8f9fa] border border-[#e5e7eb] rounded-lg p-5"
+            className="p-5"
+            style={{
+              backgroundColor: "var(--pe-color-gray-50)",
+              border: "1px solid var(--pe-color-border-light)",
+              borderRadius: "var(--pe-radius-container)",
+            }}
           >
-            <p className="text-2xl font-bold text-[#1a1a1a]">{card.value}</p>
-            <p className="text-sm text-gray-500 mt-1">{card.label}</p>
+            <p
+              className="font-bold"
+              style={{
+                fontSize: "var(--pe-font-size-2xl)",
+                color: "var(--pe-color-text-primary)",
+              }}
+            >
+              {card.value}
+            </p>
+            <p
+              className="mt-1"
+              style={{
+                fontSize: "var(--pe-font-size-sm)",
+                color: "var(--pe-color-text-secondary)",
+              }}
+            >
+              {card.label}
+            </p>
           </div>
         ))}
       </div>

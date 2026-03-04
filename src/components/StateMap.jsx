@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 
-// Simplified US state grid layout for a heat-map style view
+/* Simplified US state grid layout for a heat-map style view */
 const STATE_GRID = [
   [null, null, null, null, null, null, null, null, null, null, null, "AK"],
   ["WA", "MT", "ND", "MN", "WI", "MI", null, null, "VT", "NH", "ME", null],
@@ -16,7 +16,7 @@ const STATE_GRID = [
 function formatCompact(n) {
   if (n >= 1e6) return `${(n / 1e6).toFixed(1)}M`;
   if (n >= 1e3) return `${(n / 1e3).toFixed(0)}K`;
-  return n.toString();
+  return Math.round(n).toString();
 }
 
 export default function StateMap({ data }) {
@@ -34,15 +34,22 @@ export default function StateMap({ data }) {
     return Math.max(...data.map((d) => d.recipients_lost));
   }, [data]);
 
+  /*
+   * Generate teal intensity from PE primary palette.
+   * Full intensity = primary-700, zero = gray-200.
+   * We interpolate RGB between gray-200 (#E2E8F0) and primary-700 (#285E61).
+   */
   function getColor(abbr) {
     const row = stateData[abbr];
-    if (!row) return "#f3f4f6";
-    if (String(row.is_bbce).toLowerCase() !== "true") return "#e5e7eb";
-    if (row.recipients_lost === 0) return "#e5e7eb";
+    if (!row) return "var(--pe-color-gray-100)";
+    if (String(row.is_bbce).toLowerCase() !== "true")
+      return "var(--pe-color-gray-200)";
+    if (row.recipients_lost === 0) return "var(--pe-color-gray-200)";
     const intensity = row.recipients_lost / maxLost;
-    const r = Math.round(44 + (220 - 44) * (1 - intensity));
-    const g = Math.round(100 + (230 - 100) * (1 - intensity));
-    const b = Math.round(150 + (245 - 150) * (1 - intensity));
+    /* Interpolate from gray-200 (226,232,240) to primary-700 (40,94,97) */
+    const r = Math.round(226 + (40 - 226) * intensity);
+    const g = Math.round(232 + (94 - 232) * intensity);
+    const b = Math.round(240 + (97 - 240) * intensity);
     return `rgb(${r}, ${g}, ${b})`;
   }
 
@@ -50,10 +57,24 @@ export default function StateMap({ data }) {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-[#1a1a1a] mb-4">
+      <h2
+        className="mb-4"
+        style={{
+          fontSize: "var(--pe-font-size-lg)",
+          fontWeight: "var(--pe-font-weight-semibold)",
+          color: "var(--pe-color-text-primary)",
+        }}
+      >
         State-level impact
       </h2>
-      <div className="bg-[#f8f9fa] border border-[#e5e7eb] rounded-lg p-4">
+      <div
+        className="p-4"
+        style={{
+          backgroundColor: "var(--pe-color-gray-50)",
+          border: "1px solid var(--pe-color-border-light)",
+          borderRadius: "var(--pe-radius-container)",
+        }}
+      >
         <div className="flex flex-col items-center">
           <div className="inline-block">
             {STATE_GRID.map((row, ri) => (
@@ -61,14 +82,24 @@ export default function StateMap({ data }) {
                 {row.map((cell, ci) => (
                   <div
                     key={`${ri}-${ci}`}
-                    className={`w-10 h-10 m-0.5 rounded text-[10px] font-medium flex items-center justify-center transition-all ${
+                    className={`w-10 h-10 m-0.5 flex items-center justify-center transition-all ${
                       cell
-                        ? "cursor-pointer hover:ring-2 hover:ring-[#2C6496]"
+                        ? "cursor-pointer hover:ring-2"
                         : ""
                     }`}
                     style={{
-                      backgroundColor: cell ? getColor(cell) : "transparent",
-                      color: cell ? "#1a1a1a" : "transparent",
+                      borderRadius: "var(--pe-radius-element)",
+                      backgroundColor: cell
+                        ? getColor(cell)
+                        : "transparent",
+                      color: cell
+                        ? "var(--pe-color-text-primary)"
+                        : "transparent",
+                      fontSize: "10px",
+                      fontWeight: "var(--pe-font-weight-medium)",
+                      ...(cell
+                        ? { "--tw-ring-color": "var(--pe-color-primary-500)" }
+                        : {}),
                     }}
                     onMouseEnter={() => cell && setHovered(cell)}
                     onMouseLeave={() => setHovered(null)}
@@ -81,7 +112,10 @@ export default function StateMap({ data }) {
           </div>
 
           {hoveredData && (
-            <div className="mt-3 text-sm text-center">
+            <div
+              className="mt-3 text-center"
+              style={{ fontSize: "var(--pe-font-size-sm)" }}
+            >
               <span className="font-semibold">{hoveredData.state}</span>
               {String(hoveredData.is_bbce).toLowerCase() === "true" ? (
                 <>
@@ -95,22 +129,40 @@ export default function StateMap({ data }) {
             </div>
           )}
 
-          <div className="flex items-center gap-3 mt-4 text-xs text-gray-500">
+          <div
+            className="flex items-center gap-3 mt-4"
+            style={{
+              fontSize: "var(--pe-font-size-xs)",
+              color: "var(--pe-color-text-secondary)",
+            }}
+          >
             <div className="flex items-center gap-1">
-              <div className="w-4 h-3 rounded bg-[#e5e7eb]" />
+              <div
+                className="w-4 h-3"
+                style={{
+                  backgroundColor: "var(--pe-color-gray-200)",
+                  borderRadius: "var(--pe-radius-element)",
+                }}
+              />
               <span>Non-BBCE / no change</span>
             </div>
             <div className="flex items-center gap-1">
               <div
-                className="w-4 h-3 rounded"
-                style={{ backgroundColor: "rgb(132, 165, 198)" }}
+                className="w-4 h-3"
+                style={{
+                  backgroundColor: "var(--pe-color-primary-300)",
+                  borderRadius: "var(--pe-radius-element)",
+                }}
               />
               <span>Lower impact</span>
             </div>
             <div className="flex items-center gap-1">
               <div
-                className="w-4 h-3 rounded"
-                style={{ backgroundColor: "rgb(44, 100, 150)" }}
+                className="w-4 h-3"
+                style={{
+                  backgroundColor: "var(--pe-color-primary-700)",
+                  borderRadius: "var(--pe-radius-element)",
+                }}
               />
               <span>Higher impact</span>
             </div>

@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@policyengine/design-system": "^0.3.0",
     "d3": "^7.9.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+@theme {
+  /* Map PE design tokens into Tailwind theme */
+  --color-pe-primary-50: var(--pe-color-primary-50);
+  --color-pe-primary-500: var(--pe-color-primary-500);
+  --color-pe-primary-600: var(--pe-color-primary-600);
+  --color-pe-primary-700: var(--pe-color-primary-700);
+
+  --color-pe-gray-50: var(--pe-color-gray-50);
+  --color-pe-gray-100: var(--pe-color-gray-100);
+  --color-pe-gray-200: var(--pe-color-gray-200);
+
+  --color-pe-error: var(--pe-color-error);
+
+  --color-pe-bg-primary: var(--pe-color-bg-primary);
+  --color-pe-text-primary: var(--pe-color-text-primary);
+  --color-pe-text-secondary: var(--pe-color-text-secondary);
+  --color-pe-text-tertiary: var(--pe-color-text-tertiary);
+
+  --color-pe-border-light: var(--pe-color-border-light);
+}
+
+body {
+  font-family: var(--pe-font-family-primary);
+  color: var(--pe-color-text-primary);
+  background: var(--pe-color-bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
