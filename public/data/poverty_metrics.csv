@@ -1,4 +1,5 @@
 metric,baseline,reform,change
-spm_poverty_rate,12.4,12.8,0.4
-spm_deep_poverty_rate,4.8,5.1,0.3
-spm_child_poverty_rate,11.2,11.8,0.6
+spm_poverty_rate,23.4683,23.6389,0.1706
+spm_child_poverty_rate,25.6655,25.9173,0.2518
+spm_deep_poverty_rate,10.1047,10.6037,0.4991
+spm_child_deep_poverty_rate,11.6415,12.4161,0.7746
