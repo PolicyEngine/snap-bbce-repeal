@@ -103,6 +103,8 @@ export default function DistributionalChart({ data }) {
             />
             <YAxis
               niceTicks
+              domain={["auto", "auto"]}
+              tickCount={6}
               tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) =>
                 mode === "absolute" ? `$${v}` : `${v}%`

@@ -122,6 +122,7 @@ export default function ArchetypeExplorer({ data }) {
             />
             <YAxis
               niceTicks
+              domain={["auto", "auto"]}
               tick={{ fontSize: 12, fontFamily }}
               tickFormatter={(v) => `$${v.toLocaleString()}`}
               label={{
