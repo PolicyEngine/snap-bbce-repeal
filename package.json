@@ -12,14 +12,15 @@
     "d3": "^7.9.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "recharts": "3.7.0"
+    "recharts": "./recharts-niceticks.tgz"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1",
     "@types/node": "25.3.3",
     "@types/react": "19.2.14",
     "next": "^14.2",
-    "typescript": "5.9.3",
-    "@tailwindcss/postcss": "^4.1",
-    "tailwindcss": "^4.1"
+    "patch-package": "^8.0.1",
+    "tailwindcss": "^4.1",
+    "typescript": "5.9.3"
   }
 }
