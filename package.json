@@ -18,7 +18,7 @@
     "@tailwindcss/postcss": "^4.1",
     "@types/node": "25.3.3",
     "@types/react": "19.2.14",
-    "next": "^14.2",
+    "next": "^16",
     "patch-package": "^8.0.1",
     "tailwindcss": "^4.1",
     "typescript": "5.9.3"
