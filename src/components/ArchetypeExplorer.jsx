@@ -14,7 +14,14 @@ import {
   Legend,
 } from "recharts";
 
-import getCssVar from "../../lib/getCssVar";
+import { colors } from "@policyengine/design-system/tokens/colors";
+import { typography } from "@policyengine/design-system/tokens/typography";
+
+const primaryColor = colors.primary[500];
+const errorColor = colors.error;
+const gridColor = colors.border.light;
+const grayColor = colors.gray[400];
+const fontFamily = typography.fontFamily.primary;
 
 export default function ArchetypeExplorer({ data }) {
   const archetypes = useMemo(() => {
@@ -34,19 +41,6 @@ export default function ArchetypeExplorer({ data }) {
         reform: d.reform_snap,
       }));
   }, [data, selected]);
-
-  const { primaryColor, errorColor, gridColor, grayColor, fontFamily } =
-    useMemo(
-      () => ({
-        primaryColor: getCssVar("--pe-color-primary-500") || "#319795",
-        errorColor: getCssVar("--pe-color-error") || "#EF4444",
-        gridColor: getCssVar("--pe-color-border-light") || "#E2E8F0",
-        grayColor: getCssVar("--pe-color-gray-400") || "#9CA3AF",
-        fontFamily:
-          getCssVar("--pe-font-family-primary") || "Inter, sans-serif",
-      }),
-      [],
-    );
 
   return (
     <section>
