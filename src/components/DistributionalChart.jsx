@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import {
   BarChart,
   Bar,
@@ -12,7 +12,13 @@ import {
   Cell,
   ReferenceLine,
 } from "recharts";
-import getCssVar from "../../lib/getCssVar";
+import { colors } from "@policyengine/design-system/tokens/colors";
+import { typography } from "@policyengine/design-system/tokens/typography";
+
+const errorColor = colors.error;
+const gridColor = colors.border.light;
+const grayColor = colors.gray[200];
+const fontFamily = typography.fontFamily.primary;
 
 export default function DistributionalChart({ data }) {
   const [mode, setMode] = useState("absolute");
@@ -26,18 +32,6 @@ export default function DistributionalChart({ data }) {
     }));
 
   const allRow = data.find((d) => d.decile === "All");
-
-  /* Resolve tokens for Recharts (SVG needs raw values) */
-  const { errorColor, gridColor, grayColor, fontFamily } = useMemo(
-    () => ({
-      errorColor: getCssVar("--pe-color-error") || "#EF4444",
-      gridColor: getCssVar("--pe-color-border-light") || "#E2E8F0",
-      grayColor: getCssVar("--pe-color-gray-200") || "#E2E8F0",
-      fontFamily:
-        getCssVar("--pe-font-family-primary") || "Inter, sans-serif",
-    }),
-    [],
-  );
 
   return (
     <section>
