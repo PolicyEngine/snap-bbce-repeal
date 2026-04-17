@@ -6,7 +6,9 @@ import pandas as pd
 from ..constants import ANALYSIS_YEAR
 
 
-def calculate_national_impact(baseline=None, reformed=None, year=ANALYSIS_YEAR):
+def calculate_national_impact(
+    baseline=None, reformed=None, year=ANALYSIS_YEAR
+):
     """Calculate national aggregate impact of repealing BBCE.
 
     Args:

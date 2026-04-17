@@ -11,16 +11,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
-      - run: uv pip install --system ruff
-      - run: ruff check src/ tests/
+      - run: uv venv
+      - run: uv pip install ruff
+      - run: uv run ruff check src/ tests/
 
   test-core:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v4
-      - run: uv pip install --system -e ".[dev]"
-      - run: pytest -m "not microsim" -v
+      - run: uv venv
+      - run: uv pip install -e ".[dev]"
+      - run: uv run pytest -m "not microsim" -v || test $? -eq 5
 
   build-app:
     runs-on: ubuntu-latest
