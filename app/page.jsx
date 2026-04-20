@@ -94,7 +94,7 @@ function Dashboard() {
         style={{ backgroundColor: "var(--pe-color-primary-700)" }}
       >
         <div className="max-w-5xl mx-auto flex items-center gap-4">
-          <img src={PE_LOGO_URL} alt="PolicyEngine" className="h-8" />
+          <img src={PE_LOGO_URL} alt="PolicyEngine logo" width={120} height={32} className="h-8" />
           <div>
             <h1
               className="text-2xl font-bold tracking-tight"
@@ -117,35 +117,42 @@ function Dashboard() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 py-6">
-        <div
-          className="flex gap-1 mb-6"
-          style={{ borderBottom: "1px solid var(--pe-color-border-light)" }}
-        >
-          {[
-            { id: "overview", label: "Overview" },
-            { id: "states", label: "State impact" },
-            { id: "households", label: "Household explorer" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              className="px-4 py-2.5 font-medium transition-colors cursor-pointer"
-              style={{
-                fontSize: "var(--pe-font-size-sm)",
-                color:
-                  activeTab === tab.id
-                    ? "var(--pe-color-primary-600)"
-                    : "var(--pe-color-text-tertiary)",
-                borderBottom:
-                  activeTab === tab.id
-                    ? "2px solid var(--pe-color-primary-500)"
-                    : "2px solid transparent",
-              }}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <nav aria-label="Analysis sections">
+          <div
+            className="flex gap-1 mb-6"
+            role="tablist"
+            style={{ borderBottom: "1px solid var(--pe-color-border-light)" }}
+          >
+            {[
+              { id: "overview", label: "Overview" },
+              { id: "states", label: "State impact" },
+              { id: "households", label: "Household explorer" },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                role="tab"
+                aria-selected={activeTab === tab.id}
+                aria-controls={`tabpanel-${tab.id}`}
+                id={`tab-${tab.id}`}
+                className="px-4 py-2.5 font-medium transition-colors cursor-pointer"
+                style={{
+                  fontSize: "var(--pe-font-size-sm)",
+                  color:
+                    activeTab === tab.id
+                      ? "var(--pe-color-primary-600)"
+                      : "var(--pe-color-text-tertiary)",
+                  borderBottom:
+                    activeTab === tab.id
+                      ? "2px solid var(--pe-color-primary-500)"
+                      : "2px solid transparent",
+                }}
+                onClick={() => handleTabChange(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </nav>
 
         {error && (
           <p
@@ -167,48 +174,48 @@ function Dashboard() {
         {!loading && !error && data && (
           <>
             {activeTab === "overview" && (
-              <div className="space-y-8">
+              <div role="tabpanel" id="tabpanel-overview" aria-labelledby="tab-overview" className="space-y-8">
                 <NationalOverview data={data.national} />
                 <DistributionalChart data={data.distributional} />
                 <PovertyMetrics data={data.poverty} />
               </div>
             )}
             {activeTab === "states" && (
-              <div className="space-y-8">
+              <div role="tabpanel" id="tabpanel-states" aria-labelledby="tab-states" className="space-y-8">
                 <StateMap data={data.stateImpact} />
                 <StateTable data={data.stateImpact} />
               </div>
             )}
             {activeTab === "households" && (
-              <div className="space-y-8">
+              <div role="tabpanel" id="tabpanel-households" aria-labelledby="tab-households" className="space-y-8">
                 <ArchetypeExplorer data={data.archetypes} />
                 <MethodologyNote />
               </div>
             )}
           </>
         )}
-
-        <footer
-          className="mt-12 pt-6 text-center pb-6"
-          style={{
-            borderTop: "1px solid var(--pe-color-border-light)",
-            color: "var(--pe-color-text-tertiary)",
-            fontSize: "var(--pe-font-size-xs)",
-          }}
-        >
-          Built by{" "}
-          <a
-            href="https://policyengine.org"
-            target="_blank"
-            rel="noreferrer"
-            style={{ color: "var(--pe-color-primary-500)" }}
-            className="hover:underline"
-          >
-            PolicyEngine
-          </a>{" "}
-          using the Enhanced CPS and PolicyEngine US microsimulation model.
-        </footer>
       </main>
+
+      <footer
+        className="mt-12 pt-6 text-center pb-6 max-w-5xl mx-auto px-4"
+        style={{
+          borderTop: "1px solid var(--pe-color-border-light)",
+          color: "var(--pe-color-text-tertiary)",
+          fontSize: "var(--pe-font-size-xs)",
+        }}
+      >
+        Built by{" "}
+        <a
+          href="https://policyengine.org"
+          target="_blank"
+          rel="noreferrer"
+          style={{ color: "var(--pe-color-primary-500)" }}
+          className="hover:underline"
+        >
+          PolicyEngine
+        </a>{" "}
+        using the Enhanced CPS and PolicyEngine US microsimulation model.
+      </footer>
     </div>
   );
 }
