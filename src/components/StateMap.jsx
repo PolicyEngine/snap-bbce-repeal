@@ -1,5 +1,6 @@
 "use client";
 
+import { colors } from "@policyengine/design-system/tokens/colors";
 import { useState, useMemo } from "react";
 
 /* Simplified US state grid layout for a heat-map style view */
@@ -37,27 +38,33 @@ export default function StateMap({ data }) {
   /*
    * Generate teal intensity from PE primary palette.
    * Full intensity = primary-700, zero = gray-200.
-   * We interpolate RGB between gray-200 (#E2E8F0) and primary-700 (#285E61).
+   * We interpolate RGB between gray-200 and primary-700 using design-system tokens.
    */
   const stateColors = useMemo(() => {
-    const colors = {};
+    const parseHex = (hex) => [
+      parseInt(hex.slice(1, 3), 16),
+      parseInt(hex.slice(3, 5), 16),
+      parseInt(hex.slice(5, 7), 16),
+    ];
+    const [gR, gG, gB] = parseHex(colors.gray[200]);
+    const [pR, pG, pB] = parseHex(colors.primary[700]);
+    const result = {};
     for (const row of STATE_GRID.flat()) {
       if (!row) continue;
       const d = stateData[row];
       if (!d) {
-        colors[row] = "var(--pe-color-gray-100)";
+        result[row] = colors.gray[100];
       } else if (!d.is_bbce || d.recipients_lost === 0) {
-        colors[row] = "var(--pe-color-gray-200)";
+        result[row] = colors.gray[200];
       } else {
         const intensity = d.recipients_lost / maxLost;
-        /* Interpolate from gray-200 (226,232,240) to primary-700 (40,94,97) */
-        const r = Math.round(226 + (40 - 226) * intensity);
-        const g = Math.round(232 + (94 - 232) * intensity);
-        const b = Math.round(240 + (97 - 240) * intensity);
-        colors[row] = `rgb(${r}, ${g}, ${b})`;
+        const r = Math.round(gR + (pR - gR) * intensity);
+        const g = Math.round(gG + (pG - gG) * intensity);
+        const b = Math.round(gB + (pB - gB) * intensity);
+        result[row] = `rgb(${r}, ${g}, ${b})`;
       }
     }
-    return colors;
+    return result;
   }, [stateData, maxLost]);
 
   const hoveredData = hovered ? stateData[hovered] : null;
