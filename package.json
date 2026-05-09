@@ -8,7 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@policyengine/ui-kit": "^0.8.0",
+    "@policyengine/ui-kit": "^0.9.0",
     "d3": "^7.9.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -18,7 +18,7 @@
     "@tailwindcss/postcss": "^4.1",
     "@types/node": "25.3.3",
     "@types/react": "19.2.14",
-    "next": "^14.2",
+    "next": "^16.2.4",
     "patch-package": "^8.0.1",
     "tailwindcss": "^4.1",
     "typescript": "5.9.3"
