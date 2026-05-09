@@ -82,7 +82,7 @@ export default function RootLayout({ children }) {
         />
         <link
           rel="stylesheet"
-          href="https://unpkg.com/@policyengine/design-system/dist/tokens.css"
+          href="https://unpkg.com/@policyengine/ui-kit/dist/styles.css"
         />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
