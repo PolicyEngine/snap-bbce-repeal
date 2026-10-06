@@ -1,69 +1,88 @@
-"use client";
+import StatCard from "./StatCard";
 
-function formatNumber(value) {
-  if (value >= 1e9) return `$${(value / 1e9).toFixed(1)} billion`;
+function formatCount(value) {
+  if (value >= 1e9) return `${(value / 1e9).toFixed(1)} billion`;
   if (value >= 1e6) return `${(value / 1e6).toFixed(1)} million`;
-  return value.toLocaleString();
+  return Math.round(value).toLocaleString();
+}
+
+function formatCurrency(value) {
+  if (value >= 1e9) return `$${(value / 1e9).toFixed(1)} billion`;
+  if (value >= 1e6) return `$${(value / 1e6).toFixed(1)} million`;
+  return `$${Math.round(value).toLocaleString()}`;
+}
+
+function formatPercent(value) {
+  return `${Math.round(value * 10) / 10}%`;
 }
 
 export default function NationalOverview({ data }) {
+  const lossRate =
+    data.baseline_recipients > 0
+      ? (data.recipients_lost / data.baseline_recipients) * 100
+      : 0;
+
   const cards = [
     {
+      label: "Current-law SNAP recipients",
+      value: formatCount(data.baseline_recipients),
+      detail: "Model baseline under current BBCE rules.",
+    },
+    {
+      label: "Recipients after repeal",
+      value: formatCount(data.reform_recipients),
+      detail: "Projected SNAP recipients if BBCE is repealed.",
+      tone: "emphasis",
+    },
+    {
       label: "People losing SNAP",
-      value: formatNumber(data.recipients_lost),
+      value: formatCount(data.recipients_lost),
+      detail: `${formatPercent(lossRate)} of current SNAP recipients.`,
+      tone: data.recipients_lost > 0 ? "danger" : "default",
     },
     {
       label: "Annual spending reduction",
-      value: formatNumber(data.savings),
-    },
-    {
-      label: "Average benefit lost",
-      value: `$${Math.round(data.avg_benefit_lost).toLocaleString()}/year`,
+      value: formatCurrency(data.savings),
+      detail: `Average annual benefit lost per person: $${Math.round(
+        data.avg_benefit_lost,
+      ).toLocaleString()}`,
     },
   ];
 
   return (
     <section>
-      <h2
-        className="mb-4"
-        style={{
-          fontSize: "var(--pe-font-size-lg)",
-          fontWeight: "var(--pe-font-weight-semibold)",
-          color: "var(--pe-color-text-primary)",
-        }}
-      >
-        National summary
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="space-y-2">
+          <h2 className="dashboard-section-title mb-0">National summary</h2>
+          <p className="max-w-3xl text-pe-sm text-pe-text-secondary">
+            Under this model, SNAP participation falls from{" "}
+            <span className="font-semibold text-pe-text-primary">
+              {formatCount(data.baseline_recipients)}
+            </span>{" "}
+            people under current law to{" "}
+            <span className="font-semibold text-pe-text-primary">
+              {formatCount(data.reform_recipients)}
+            </span>{" "}
+            after BBCE repeal.
+          </p>
+        </div>
+        <p className="text-pe-sm text-pe-text-secondary">
+          Projected loss rate:{" "}
+          <span className="font-semibold text-pe-text-primary">
+            {formatPercent(lossRate)}
+          </span>
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => (
-          <div
+          <StatCard
             key={card.label}
-            className="p-5"
-            style={{
-              backgroundColor: "var(--pe-color-gray-50)",
-              border: "1px solid var(--pe-color-border-light)",
-              borderRadius: "var(--pe-radius-container)",
-            }}
-          >
-            <p
-              className="font-bold"
-              style={{
-                fontSize: "var(--pe-font-size-2xl)",
-                color: "var(--pe-color-text-primary)",
-              }}
-            >
-              {card.value}
-            </p>
-            <p
-              className="mt-1"
-              style={{
-                fontSize: "var(--pe-font-size-sm)",
-                color: "var(--pe-color-text-secondary)",
-              }}
-            >
-              {card.label}
-            </p>
-          </div>
+            label={card.label}
+            value={card.value}
+            detail={card.detail}
+            tone={card.tone}
+          />
         ))}
       </div>
     </section>

@@ -2,11 +2,13 @@
 
 ANALYSIS_YEAR = 2026
 
-# States that currently use BBCE (as of 2024).
-# Source: USDA FNS SNAP Policy Database.
+# States that currently use BBCE.
+# Source: USDA FNS BBCE factsheet, page updated December 29, 2025.
 BBCE_STATES = [
     "AL",
+    "AK",
     "AZ",
+    "AR",
     "CA",
     "CO",
     "CT",
@@ -55,8 +57,6 @@ BBCE_STATES = [
 
 # States that do NOT use BBCE.
 NON_BBCE_STATES = [
-    "AK",
-    "AR",
     "KS",
     "TN",
     "WY",

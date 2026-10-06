@@ -20,6 +20,10 @@ const gridColor = colors.border.light;
 const grayColor = colors.gray[200];
 const fontFamily = typography.fontFamily.primary;
 
+function formatRelativePercent(value, digits = 1) {
+  return `${Number(value).toFixed(digits)}%`;
+}
+
 export default function DistributionalChart({ data }) {
   const [mode, setMode] = useState("absolute");
 
@@ -35,39 +39,19 @@ export default function DistributionalChart({ data }) {
 
   return (
     <section>
-      <div className="flex items-center justify-between mb-4">
-        <h2
-          style={{
-            fontSize: "var(--pe-font-size-lg)",
-            fontWeight: "var(--pe-font-weight-semibold)",
-            color: "var(--pe-color-text-primary)",
-          }}
-        >
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h2 className="dashboard-section-title mb-0">
           Distributional impact by income decile
         </h2>
-        <div
-          className="flex gap-1 p-0.5"
-          style={{
-            backgroundColor: "var(--pe-color-gray-50)",
-            borderRadius: "var(--pe-radius-element)",
-            border: "1px solid var(--pe-color-border-light)",
-          }}
-        >
+        <div className="dashboard-panel flex gap-1 rounded-pe-element p-0.5">
           {["absolute", "relative"].map((m) => (
             <button
               key={m}
-              className="px-3 py-1 font-medium transition-colors cursor-pointer"
-              style={{
-                fontSize: "var(--pe-font-size-xs)",
-                borderRadius: "var(--pe-radius-element)",
-                backgroundColor:
-                  mode === m ? "var(--pe-color-bg-primary)" : "transparent",
-                color:
-                  mode === m
-                    ? "var(--pe-color-text-primary)"
-                    : "var(--pe-color-text-tertiary)",
-                boxShadow: mode === m ? "0 1px 2px rgba(0,0,0,0.05)" : "none",
-              }}
+              className={`cursor-pointer rounded-pe-element px-3 py-1 text-pe-xs font-medium transition-colors ${
+                mode === m
+                  ? "bg-pe-bg-primary text-pe-text-primary shadow-sm"
+                  : "text-pe-text-tertiary hover:text-pe-text-primary"
+              }`}
               onClick={() => setMode(m)}
             >
               {m === "absolute" ? "Absolute ($)" : "Relative (%)"}
@@ -76,14 +60,7 @@ export default function DistributionalChart({ data }) {
         </div>
       </div>
 
-      <div
-        className="p-4"
-        style={{
-          backgroundColor: "var(--pe-color-gray-50)",
-          border: "1px solid var(--pe-color-border-light)",
-          borderRadius: "var(--pe-radius-container)",
-        }}
-      >
+      <div className="dashboard-panel p-4">
         <ResponsiveContainer width="100%" height={320}>
           <BarChart
             data={chartData}
@@ -105,7 +82,7 @@ export default function DistributionalChart({ data }) {
                   ? v < 0
                     ? `-$${Math.abs(v)}`
                     : `$${v}`
-                  : `${v}%`
+                  : formatRelativePercent(v, 1)
               }
             />
             <Tooltip
@@ -116,7 +93,7 @@ export default function DistributionalChart({ data }) {
                       `${v < 0 ? "-" : ""}$${Math.abs(v)}/year`,
                       "Change in net income",
                     ]
-                  : [`${v}%`, "Change in net income"]
+                  : [formatRelativePercent(v, 2), "Change in net income"]
               }
             />
             <ReferenceLine y={0} stroke={grayColor} />
@@ -131,17 +108,11 @@ export default function DistributionalChart({ data }) {
           </BarChart>
         </ResponsiveContainer>
         {allRow && (
-          <p
-            className="text-center mt-2"
-            style={{
-              fontSize: "var(--pe-font-size-xs)",
-              color: "var(--pe-color-text-secondary)",
-            }}
-          >
+          <p className="mt-2 text-center text-pe-xs text-pe-text-secondary">
             Average across all households:{" "}
             {mode === "absolute"
               ? `${allRow.absolute_change < 0 ? "-" : ""}$${Math.abs(allRow.absolute_change)}/year`
-              : `${allRow.relative_change}%`}
+              : formatRelativePercent(allRow.relative_change, 2)}
           </p>
         )}
       </div>

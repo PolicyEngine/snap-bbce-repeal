@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
-  LineChart,
+  CartesianGrid,
+  Legend,
   Line,
+  LineChart,
+  ReferenceArea,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-  ReferenceArea,
-  Legend,
 } from "recharts";
 
 import { colors } from "@policyengine/design-system/tokens/colors";
@@ -44,40 +44,20 @@ export default function ArchetypeExplorer({ data }) {
 
   return (
     <section>
-      <h2
-        className="mb-4"
-        style={{
-          fontSize: "var(--pe-font-size-lg)",
-          fontWeight: "var(--pe-font-weight-semibold)",
-          color: "var(--pe-color-text-primary)",
-        }}
-      >
-        Household benefit explorer
-      </h2>
+      <h2 className="dashboard-section-title">Household benefit explorer</h2>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center">
         <label
           htmlFor="household-type"
-          className="mr-2"
-          style={{
-            fontSize: "var(--pe-font-size-sm)",
-            color: "var(--pe-color-text-secondary)",
-          }}
+          className="text-pe-sm text-pe-text-secondary"
         >
-          Household type:
+          Household type
         </label>
         <select
           id="household-type"
           value={selected}
           onChange={(e) => setSelected(e.target.value)}
-          className="px-3 py-1.5"
-          style={{
-            border: "1px solid var(--pe-color-border-light)",
-            borderRadius: "var(--pe-radius-element)",
-            fontSize: "var(--pe-font-size-sm)",
-            backgroundColor: "var(--pe-color-bg-primary)",
-            fontFamily: "var(--pe-font-family-primary)",
-          }}
+          className="dashboard-control px-3 py-2"
         >
           {archetypes.map((a) => (
             <option key={a} value={a}>
@@ -87,14 +67,7 @@ export default function ArchetypeExplorer({ data }) {
         </select>
       </div>
 
-      <div
-        className="p-4"
-        style={{
-          backgroundColor: "var(--pe-color-gray-50)",
-          border: "1px solid var(--pe-color-border-light)",
-          borderRadius: "var(--pe-radius-container)",
-        }}
-      >
+      <div className="dashboard-panel p-4">
         <ResponsiveContainer width="100%" height={360}>
           <LineChart
             data={chartData}
@@ -183,13 +156,7 @@ export default function ArchetypeExplorer({ data }) {
             />
           </LineChart>
         </ResponsiveContainer>
-        <p
-          className="text-center mt-2"
-          style={{
-            fontSize: "var(--pe-font-size-xs)",
-            color: "var(--pe-color-text-secondary)",
-          }}
-        >
+        <p className="mt-2 text-center text-pe-xs text-pe-text-secondary">
           The shaded region (130&ndash;200% FPL) shows the income range where
           BBCE currently extends SNAP eligibility beyond the federal limit.
         </p>

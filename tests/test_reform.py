@@ -24,10 +24,7 @@ def _snap_eligible(state, ages, employment_income, reform=None):
     """
     from policyengine_us import Simulation
 
-    members = {
-        f"person_{i}": {"age": {"2026": a}}
-        for i, a in enumerate(ages)
-    }
+    members = {f"person_{i}": {"age": {"2026": a}} for i, a in enumerate(ages)}
     members["person_0"]["employment_income"] = {"2026": employment_income}
 
     situation = {

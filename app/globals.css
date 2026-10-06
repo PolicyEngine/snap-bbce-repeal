@@ -4,6 +4,7 @@
 @theme {
   /* Map PE design tokens into Tailwind theme */
   --color-pe-primary-50: var(--pe-color-primary-50);
+  --color-pe-primary-200: var(--pe-color-primary-200);
   --color-pe-primary-500: var(--pe-color-primary-500);
   --color-pe-primary-600: var(--pe-color-primary-600);
   --color-pe-primary-700: var(--pe-color-primary-700);
@@ -11,6 +12,8 @@
   --color-pe-gray-50: var(--pe-color-gray-50);
   --color-pe-gray-100: var(--pe-color-gray-100);
   --color-pe-gray-200: var(--pe-color-gray-200);
+  --color-pe-gray-300: var(--pe-color-gray-300);
+  --color-pe-gray-400: var(--pe-color-gray-400);
 
   --color-pe-error: var(--pe-color-error);
 
@@ -18,14 +21,38 @@
   --color-pe-text-primary: var(--pe-color-text-primary);
   --color-pe-text-secondary: var(--pe-color-text-secondary);
   --color-pe-text-tertiary: var(--pe-color-text-tertiary);
+  --color-pe-text-inverse: var(--pe-color-text-inverse);
 
   --color-pe-border-light: var(--pe-color-border-light);
+
+  --radius-pe-element: var(--pe-radius-element);
+  --radius-pe-container: var(--pe-radius-container);
+
+  --text-pe-xs: var(--pe-font-size-xs);
+  --text-pe-sm: var(--pe-font-size-sm);
+  --text-pe-lg: var(--pe-font-size-lg);
+  --text-pe-xl: var(--pe-font-size-xl);
+  --text-pe-2xl: var(--pe-font-size-2xl);
 }
 
 body {
-  font-family: var(--pe-font-family-primary);
+  font-family: var(--font-inter), var(--pe-font-family-primary);
   color: var(--pe-color-text-primary);
   background: var(--pe-color-bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .dashboard-section-title {
+    @apply mb-4 text-pe-lg font-semibold text-pe-text-primary;
+  }
+
+  .dashboard-panel {
+    @apply rounded-pe-container border border-pe-border-light bg-pe-gray-50;
+  }
+
+  .dashboard-control {
+    @apply rounded-pe-element border border-pe-border-light bg-pe-bg-primary text-pe-sm text-pe-text-primary;
+  }
 }

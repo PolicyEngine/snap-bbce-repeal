@@ -1,8 +1,8 @@
 metric,value
-baseline_recipients,16020079.597466689
-reform_recipients,9614161.258863688
-recipients_lost,6405918.338603001
-baseline_spending,50792918657.665955
-reform_spending,34936554918.650345
-savings,15856363739.01561
-avg_benefit_lost,2475.267854019125
+baseline_recipients,53872888.74126619
+reform_recipients,47843425.23179048
+recipients_lost,6029463.509475708
+baseline_spending,90174892922.47739
+reform_spending,88485464064.57614
+savings,1689428857.901245
+avg_benefit_lost,280.19555226533737

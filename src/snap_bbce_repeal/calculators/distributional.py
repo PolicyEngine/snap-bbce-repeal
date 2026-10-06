@@ -41,15 +41,9 @@ def calculate_distributional_impact(
         baseline = Microsimulation()
         reformed = Microsimulation(reform=get_bbce_repeal_reform())
 
-    baseline_income = baseline.calculate(
-        "household_net_income", year
-    )
-    reform_income_raw = reformed.calculate(
-        "household_net_income", year
-    )
-    income_decile = baseline.calculate(
-        "household_income_decile", year
-    )
+    baseline_income = baseline.calculate("household_net_income", year)
+    reform_income_raw = reformed.calculate("household_net_income", year)
+    income_decile = baseline.calculate("household_income_decile", year)
 
     reform_income = mdf.MicroSeries(
         reform_income_raw.values, weights=baseline_income.weights
@@ -70,11 +64,7 @@ def calculate_distributional_impact(
 
         change_sum = income_change[mask].sum()
         baseline_sum = baseline_income[mask].sum()
-        relative = (
-            (change_sum / baseline_sum) * 100
-            if baseline_sum > 0
-            else 0
-        )
+        relative = (change_sum / baseline_sum) * 100 if baseline_sum > 0 else 0
         avg_change = income_change[mask].mean()
 
         results.append(
@@ -89,16 +79,12 @@ def calculate_distributional_impact(
     total_change = income_change.sum()
     total_baseline = baseline_income.sum()
     overall_relative = (
-        (total_change / total_baseline) * 100
-        if total_baseline > 0
-        else 0
+        (total_change / total_baseline) * 100 if total_baseline > 0 else 0
     )
     results.append(
         {
             "decile": "All",
-            "absolute_change": round(
-                float(income_change.mean()), 2
-            ),
+            "absolute_change": round(float(income_change.mean()), 2),
             "relative_change": round(float(overall_relative), 4),
         }
     )

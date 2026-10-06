@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
+
+const ALIGNMENT_CLASS = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+};
 
 function fmt(n) {
   return Math.round(n).toLocaleString();
@@ -12,12 +18,25 @@ function fmtDollars(n) {
   return `$${Math.round(n).toLocaleString()}`;
 }
 
+function fmtPercent(n) {
+  return `${(n * 100).toFixed(1)}%`;
+}
+
 const COLUMNS = [
   { key: "state", label: "State", align: "left" },
-  { key: "is_bbce", label: "BBCE", align: "center" },
-  { key: "baseline_recipients", label: "Baseline recipients", align: "right" },
-  { key: "reform_recipients", label: "Reform recipients", align: "right" },
-  { key: "recipients_lost", label: "Recipients lost", align: "right" },
+  { key: "is_bbce", label: "BBCE policy", align: "left" },
+  {
+    key: "baseline_recipients",
+    label: "Current SNAP recipients",
+    align: "right",
+  },
+  {
+    key: "reform_recipients",
+    label: "After repeal",
+    align: "right",
+  },
+  { key: "recipients_lost", label: "People losing SNAP", align: "right" },
+  { key: "loss_rate", label: "Share losing", align: "right" },
   { key: "savings", label: "Spending reduction", align: "right" },
 ];
 
@@ -27,10 +46,19 @@ export default function StateTable({ data }) {
 
   const sorted = useMemo(() => {
     return [...data].sort((a, b) => {
-      let av = a[sortKey],
-        bv = b[sortKey];
-      if (typeof av === "string") av = av.toLowerCase();
-      if (typeof bv === "string") bv = bv.toLowerCase();
+      const av =
+        sortKey === "loss_rate"
+          ? a.recipients_lost / a.baseline_recipients || 0
+          : a[sortKey];
+      const bv =
+        sortKey === "loss_rate"
+          ? b.recipients_lost / b.baseline_recipients || 0
+          : b[sortKey];
+
+      if (typeof av === "string" && typeof bv === "string") {
+        return sortAsc ? av.localeCompare(bv) : bv.localeCompare(av);
+      }
+
       if (av < bv) return sortAsc ? -1 : 1;
       if (av > bv) return sortAsc ? 1 : -1;
       return 0;
@@ -40,12 +68,18 @@ export default function StateTable({ data }) {
   const totals = useMemo(() => {
     return {
       baseline_recipients: data.reduce(
-        (s, r) => s + r.baseline_recipients,
+        (sum, row) => sum + row.baseline_recipients,
         0,
       ),
-      reform_recipients: data.reduce((s, r) => s + r.reform_recipients, 0),
-      recipients_lost: data.reduce((s, r) => s + r.recipients_lost, 0),
-      savings: data.reduce((s, r) => s + r.savings, 0),
+      reform_recipients: data.reduce(
+        (sum, row) => sum + row.reform_recipients,
+        0,
+      ),
+      recipients_lost: data.reduce(
+        (sum, row) => sum + row.recipients_lost,
+        0,
+      ),
+      savings: data.reduce((sum, row) => sum + row.savings, 0),
     };
   }, [data]);
 
@@ -59,55 +93,42 @@ export default function StateTable({ data }) {
   }
 
   function renderCell(row, col) {
-    const v = row[col.key];
+    const value = row[col.key];
+
     if (col.key === "is_bbce") {
-      return v === true ? "Yes" : "No";
+      return value === true ? "Uses BBCE" : "No BBCE";
     }
-    if (col.key === "savings") return fmtDollars(v);
-    if (col.key === "state") return v;
-    if (typeof v === "number") return fmt(v);
-    return v;
+
+    if (col.key === "loss_rate") {
+      return fmtPercent(row.recipients_lost / row.baseline_recipients || 0);
+    }
+
+    if (col.key === "savings") return fmtDollars(value);
+    if (col.key === "state") return value;
+    if (typeof value === "number") return fmt(value);
+    return value;
   }
 
   return (
     <section>
-      <h2
-        className="mb-4"
-        style={{
-          fontSize: "var(--pe-font-size-lg)",
-          fontWeight: "var(--pe-font-weight-semibold)",
-          color: "var(--pe-color-text-primary)",
-        }}
-      >
-        State detail
-      </h2>
-      <div
-        className="overflow-x-auto"
-        style={{
-          border: "1px solid var(--pe-color-border-light)",
-          borderRadius: "var(--pe-radius-container)",
-        }}
-      >
-        <table
-          className="w-full"
-          style={{ fontSize: "var(--pe-font-size-sm)" }}
-        >
+      <div className="mb-4 flex flex-col gap-2">
+        <h2 className="dashboard-section-title mb-0">State detail</h2>
+        <p className="text-pe-sm text-pe-text-secondary">
+          Sort states by current recipients, projected losses, or spending
+          reduction to compare current-law SNAP participation against the
+          repeal scenario.
+        </p>
+      </div>
+
+      <div className="dashboard-panel overflow-x-auto">
+        <table className="w-full text-pe-sm">
           <thead>
-            <tr style={{ backgroundColor: "var(--pe-color-gray-50)" }}>
+            <tr className="bg-pe-gray-50">
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-3 py-2.5 font-medium cursor-pointer select-none whitespace-nowrap text-${col.align}`}
-                  style={{ color: "var(--pe-color-text-secondary)" }}
+                  className={`cursor-pointer select-none whitespace-nowrap px-3 py-2.5 font-medium text-pe-text-secondary transition-colors hover:text-pe-primary-500 ${ALIGNMENT_CLASS[col.align]}`}
                   onClick={() => handleSort(col.key)}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.color =
-                      "var(--pe-color-primary-500)")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.color =
-                      "var(--pe-color-text-secondary)")
-                  }
                 >
                   {col.label}
                   {sortKey === col.key && (
@@ -119,35 +140,27 @@ export default function StateTable({ data }) {
               ))}
             </tr>
           </thead>
+
           <tbody>
             {sorted.map((row) => {
               const isBbce = row.is_bbce === true;
+
               return (
                 <tr
                   key={row.state}
-                  style={{
-                    borderTop: "1px solid var(--pe-color-border-light)",
-                    backgroundColor: isBbce
-                      ? "var(--pe-color-bg-primary)"
-                      : "var(--pe-color-gray-50)",
-                  }}
+                  className={`border-t border-pe-border-light ${
+                    isBbce ? "bg-pe-bg-primary" : "bg-pe-gray-50"
+                  }`}
                 >
                   {COLUMNS.map((col) => (
                     <td
                       key={col.key}
-                      className={`px-3 py-2 text-${col.align}`}
-                      style={{
-                        color:
-                          col.key === "recipients_lost" &&
-                          row.recipients_lost > 0
-                            ? "var(--pe-color-error)"
-                            : "var(--pe-color-text-primary)",
-                        fontWeight:
-                          col.key === "recipients_lost" &&
-                          row.recipients_lost > 0
-                            ? "var(--pe-font-weight-medium)"
-                            : "var(--pe-font-weight-normal)",
-                      }}
+                      className={`${ALIGNMENT_CLASS[col.align]} px-3 py-2 ${
+                        col.key === "recipients_lost" &&
+                        row.recipients_lost > 0
+                          ? "font-medium text-pe-error"
+                          : "text-pe-text-primary"
+                      }`}
                     >
                       {renderCell(row, col)}
                     </td>
@@ -155,26 +168,23 @@ export default function StateTable({ data }) {
                 </tr>
               );
             })}
-            <tr
-              className="font-semibold"
-              style={{
-                borderTop: "2px solid var(--pe-color-primary-500)",
-                backgroundColor: "var(--pe-color-gray-50)",
-              }}
-            >
-              <td className="px-3 py-2">Total</td>
-              <td className="px-3 py-2 text-center">&mdash;</td>
+
+            <tr className="border-t-2 border-pe-primary-500 bg-pe-gray-50 font-semibold">
+              <td className="px-3 py-2 text-left">Total</td>
+              <td className="px-3 py-2 text-left">&mdash;</td>
               <td className="px-3 py-2 text-right">
                 {fmt(totals.baseline_recipients)}
               </td>
               <td className="px-3 py-2 text-right">
                 {fmt(totals.reform_recipients)}
               </td>
-              <td
-                className="px-3 py-2 text-right"
-                style={{ color: "var(--pe-color-error)" }}
-              >
+              <td className="px-3 py-2 text-right text-pe-error">
                 {fmt(totals.recipients_lost)}
+              </td>
+              <td className="px-3 py-2 text-right">
+                {fmtPercent(
+                  totals.recipients_lost / totals.baseline_recipients || 0,
+                )}
               </td>
               <td className="px-3 py-2 text-right">
                 {fmtDollars(totals.savings)}

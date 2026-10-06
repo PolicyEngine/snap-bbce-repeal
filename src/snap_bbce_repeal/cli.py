@@ -19,7 +19,15 @@ def main():
         default="public/data",
         help="Output directory for CSV files",
     )
+    parser.add_argument(
+        "--dataset",
+        default=None,
+        help=(
+            "Optional dataset path or identifier to pass to "
+            "policyengine_us.Microsimulation"
+        ),
+    )
     args = parser.parse_args()
 
     if args.command == "generate":
-        generate_all_data(output_dir=args.output_dir)
+        generate_all_data(output_dir=args.output_dir, dataset=args.dataset)

@@ -12,8 +12,14 @@ from .calculators.state import calculate_state_impact
 from .constants import ANALYSIS_YEAR
 
 
-def generate_all_data(output_dir="public/data"):
-    """Run all calculators and save CSVs to output_dir."""
+def generate_all_data(output_dir="public/data", dataset=None):
+    """Run all calculators and save CSVs to output_dir.
+
+    Args:
+        output_dir: Directory to write CSVs to.
+        dataset: Optional dataset path or identifier accepted by
+            ``policyengine_us.Microsimulation``.
+    """
     os.makedirs(output_dir, exist_ok=True)
 
     # Build shared Microsimulation instances once (expensive).
@@ -22,9 +28,11 @@ def generate_all_data(output_dir="public/data"):
     from .reform import get_bbce_repeal_reform
 
     print("Loading baseline microsimulation...")
-    baseline = Microsimulation()
+    baseline = Microsimulation(dataset=dataset)
     print("Loading reform microsimulation...")
-    reformed = Microsimulation(reform=get_bbce_repeal_reform())
+    reformed = Microsimulation(
+        reform=get_bbce_repeal_reform(), dataset=dataset
+    )
 
     year = ANALYSIS_YEAR
 
@@ -39,9 +47,7 @@ def generate_all_data(output_dir="public/data"):
     print(f"  Saved {output_dir}/state_impact.csv")
 
     print("Calculating distributional impact...")
-    distributional = calculate_distributional_impact(
-        baseline, reformed, year
-    )
+    distributional = calculate_distributional_impact(baseline, reformed, year)
     distributional.to_csv(
         f"{output_dir}/distributional_impact.csv", index=False
     )

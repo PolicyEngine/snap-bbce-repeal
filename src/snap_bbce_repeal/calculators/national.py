@@ -6,7 +6,9 @@ import pandas as pd
 from ..constants import ANALYSIS_YEAR
 
 
-def calculate_national_impact(baseline=None, reformed=None, year=ANALYSIS_YEAR):
+def calculate_national_impact(
+    baseline=None, reformed=None, year=ANALYSIS_YEAR
+):
     """Calculate national aggregate impact of repealing BBCE.
 
     Args:
@@ -27,6 +29,16 @@ def calculate_national_impact(baseline=None, reformed=None, year=ANALYSIS_YEAR):
         baseline = Microsimulation()
         reformed = Microsimulation(reform=get_bbce_repeal_reform())
 
+    # Count SNAP receipt at the person level to match the public-facing
+    # "people receiving SNAP" framing used in the dashboard.
+    baseline_snap_people = baseline.calculate("snap", year, map_to="person")
+    reform_snap_people_raw = reformed.calculate("snap", year, map_to="person")
+    reform_snap_people = mdf.MicroSeries(
+        reform_snap_people_raw.values, weights=baseline_snap_people.weights
+    )
+
+    # Sum spending at the program-benefit level to avoid double-counting
+    # household allotments across people.
     baseline_snap = baseline.calculate("snap", year)
     reform_snap_raw = reformed.calculate("snap", year)
     reform_snap = mdf.MicroSeries(
@@ -37,17 +49,15 @@ def calculate_national_impact(baseline=None, reformed=None, year=ANALYSIS_YEAR):
     reform_spending = float(reform_snap.sum())
 
     baseline_recipients = float(
-        baseline_snap[baseline_snap > 0].weights.sum()
+        baseline_snap_people[baseline_snap_people > 0].weights.sum()
     )
     reform_recipients = float(
-        reform_snap[reform_snap > 0].weights.sum()
+        reform_snap_people[reform_snap_people > 0].weights.sum()
     )
 
     recipients_lost = baseline_recipients - reform_recipients
     savings = baseline_spending - reform_spending
-    avg_benefit_lost = (
-        savings / recipients_lost if recipients_lost > 0 else 0
-    )
+    avg_benefit_lost = savings / recipients_lost if recipients_lost > 0 else 0
 
     rows = [
         {"metric": "baseline_recipients", "value": baseline_recipients},

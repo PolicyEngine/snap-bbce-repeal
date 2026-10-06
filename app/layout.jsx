@@ -1,4 +1,12 @@
+import { Inter } from "next/font/google";
+
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export const metadata = {
   title: "SNAP BBCE repeal analysis | PolicyEngine",
@@ -9,17 +17,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://unpkg.com/@policyengine/design-system/dist/tokens.css"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </head>
-      <body>{children}</body>
+      <body className={inter.variable}>{children}</body>
     </html>
   );
 }
